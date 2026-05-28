@@ -1,0 +1,51 @@
+{
+  "schema_version": "0.1.0",
+  "scenario_id": "self_hosting_replay",
+  "name": "Self-hosting replay loop",
+  "description": "Canonical no-hardware scenario proving the Agent-facing outcome and Evidence Envelope contract.",
+  "support_boundary": {
+    "phase": "phase_1",
+    "target": "dut_agentprobe",
+    "protocols": ["swd", "spi", "uart"],
+    "capture_channels": 4
+  },
+  "topology": {
+    "schema_version": "0.1.0",
+    "connection_topology_id": "topology_self_hosting_replay_v1",
+    "devices": [
+      {
+        "role": "golden",
+        "device_id": "ap_golden_replay",
+        "serial": "APG-REPLAY-001",
+        "firmware_version": "0.1.0-replay",
+        "bitstream_version": "0.1.0-replay",
+        "golden_upgrade_allowed": false
+      },
+      {
+        "role": "dut",
+        "device_id": "ap_dut_replay",
+        "serial": "APD-REPLAY-001",
+        "firmware_version": "0.1.0-replay",
+        "bitstream_version": "0.1.0-replay",
+        "golden_upgrade_allowed": false
+      }
+    ],
+    "connections": [
+      {
+        "from": "ap_golden_replay.swd",
+        "to": "ap_dut_replay.swd",
+        "signal": "swdio/swdclk/nreset",
+        "purpose": "swd"
+      },
+      {
+        "from": "ap_dut_replay.uart_tx",
+        "to": "ap_golden_replay.uart_rx",
+        "signal": "uart_tx",
+        "purpose": "uart"
+      }
+    ],
+    "allowed_state_changing_actions": ["flash", "reset", "mock_start", "mock_stop"]
+  },
+  "expected_terminal_state": "regression_pass",
+  "artifacts": ["scenarios/replay/nominal/self_hosting_replay.json"]
+}

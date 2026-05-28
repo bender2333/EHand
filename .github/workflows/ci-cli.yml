@@ -1,0 +1,15 @@
+name: ci-cli
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  compile:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m compileall -q cli/src

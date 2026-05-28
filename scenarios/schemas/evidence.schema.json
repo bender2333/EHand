@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentprobe.dev/schemas/evidence.schema.json",
+  "title": "AgentProbe Evidence Package",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "run_id",
+    "trace_id",
+    "source_device_role",
+    "target_device_role",
+    "device_id",
+    "serial",
+    "firmware_version",
+    "bitstream_version",
+    "connection_topology_id",
+    "source_device",
+    "target_device",
+    "build_result",
+    "flash_result",
+    "capture_result",
+    "diagnosis_result",
+    "regression_result",
+    "verdict",
+    "confidence"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "run_id": { "type": "string", "minLength": 1 },
+    "trace_id": { "type": "string", "minLength": 1 },
+    "source_device_role": { "type": "string", "enum": ["golden", "dut", "external_target", "host"] },
+    "target_device_role": { "type": "string", "enum": ["golden", "dut", "external_target", "host"] },
+    "source_device": {
+      "type": "object",
+      "required": ["role", "device_id", "serial", "firmware_version", "bitstream_version"],
+      "properties": {
+        "role": { "type": "string", "enum": ["golden", "dut", "external_target", "host"] },
+        "device_id": { "type": "string", "minLength": 1 },
+        "serial": { "type": "string", "minLength": 1 },
+        "firmware_version": { "type": "string", "minLength": 1 },
+        "bitstream_version": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "target_device": {
+      "type": "object",
+      "required": ["role", "device_id", "serial", "firmware_version", "bitstream_version"],
+      "properties": {
+        "role": { "type": "string", "enum": ["golden", "dut", "external_target", "host"] },
+        "device_id": { "type": "string", "minLength": 1 },
+        "serial": { "type": "string", "minLength": 1 },
+        "firmware_version": { "type": "string", "minLength": 1 },
+        "bitstream_version": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "device_id": { "type": "string", "minLength": 1 },
+    "serial": { "type": "string", "minLength": 1 },
+    "firmware_version": { "type": "string", "minLength": 1 },
+    "bitstream_version": { "type": "string", "minLength": 1 },
+    "connection_topology_id": { "type": "string", "minLength": 1 },
+    "build_result": { "type": "object" },
+    "flash_result": { "type": "object" },
+    "capture_result": { "type": "object" },
+    "diagnosis_result": { "type": "object" },
+    "regression_result": { "type": "object" },
+    "verdict": { "type": "string" },
+    "confidence": { "type": "string", "enum": ["high", "medium", "low"] },
+    "escalation_reason": { "type": ["string", "null"] },
+    "artifact_refs": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(PYTHONPATH=cli/src python -m agentprobe scenario run --replay --json)",
+      "Bash(PYTHONPATH=cli/src python -m unittest discover cli/tests -v)",
+      "Bash(PYTHONPATH=cli/src python cli/tools/generate_protocol.py)"
+    ]
+  }
+}

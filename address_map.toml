@@ -1,0 +1,69 @@
+# AgentProbe AXI address map SSOT for Zynq PS <-> PL.
+
+[versions]
+address_map = "0.1.0"
+generated_hash_algorithm = "sha256"
+
+[axi]
+data_width_bits = 32
+addr_width_bits = 32
+endianness = "little"
+
+[regions.control]
+base = "0x40000000"
+size = "0x00001000"
+description = "Global control, identity, version, and status registers."
+
+[regions.io_router]
+base = "0x40001000"
+size = "0x00001000"
+description = "Pin routing matrix and role-safe route configuration."
+
+[regions.swd]
+base = "0x40002000"
+size = "0x00001000"
+description = "CMSIS-DAP/SWD engine control registers."
+
+[regions.logic_analyzer]
+base = "0x40003000"
+size = "0x00002000"
+description = "8-channel capture configuration and status."
+
+[regions.uart_bridge]
+base = "0x40005000"
+size = "0x00001000"
+description = "UART bridge/snoop configuration and FIFOs."
+
+[regions.spi_mock]
+base = "0x40006000"
+size = "0x00002000"
+description = "SPI slave mock configuration, register model, and transaction status."
+
+[registers.control]
+identity = "0x0000"
+protocol_version = "0x0004"
+firmware_version = "0x0008"
+bitstream_version = "0x000C"
+device_role = "0x0010"
+topology_hash_0 = "0x0014"
+topology_hash_1 = "0x0018"
+topology_hash_2 = "0x001C"
+topology_hash_3 = "0x0020"
+status = "0x0024"
+error_code = "0x0028"
+
+[registers.logic_analyzer]
+config = "0x0000"
+trigger_mask = "0x0004"
+trigger_value = "0x0008"
+sample_depth = "0x000C"
+status = "0x0010"
+event_fifo_level = "0x0014"
+
+[registers.spi_mock]
+config = "0x0000"
+mode = "0x0004"
+max_freq_hz = "0x0008"
+status = "0x000C"
+transaction_count = "0x0010"
+last_error = "0x0014"

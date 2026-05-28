@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentprobe.dev/schemas/outcome.schema.json",
+  "title": "AgentProbe Outcome",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "status",
+    "terminal_state",
+    "verdict",
+    "confidence",
+    "next_action",
+    "evidence"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "status": { "type": "string", "enum": ["ok", "error", "blocked"] },
+    "terminal_state": {
+      "type": "string",
+      "enum": ["regression_pass", "explicit_escalation", "unsupported", "unknown", "approval_pending"]
+    },
+    "verdict": { "type": "string" },
+    "confidence": { "type": "string", "enum": ["high", "medium", "low"] },
+    "next_action": { "type": "string" },
+    "evidence": { "$ref": "evidence.schema.json" }
+  },
+  "additionalProperties": false
+}

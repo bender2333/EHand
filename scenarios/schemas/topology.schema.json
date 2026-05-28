@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentprobe.dev/schemas/topology.schema.json",
+  "title": "AgentProbe Topology",
+  "type": "object",
+  "required": ["schema_version", "connection_topology_id", "devices", "connections"],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "connection_topology_id": { "type": "string", "minLength": 1 },
+    "devices": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["role", "device_id", "serial", "firmware_version", "bitstream_version"],
+        "properties": {
+          "role": { "type": "string", "enum": ["golden", "dut", "external_target", "host"] },
+          "device_id": { "type": "string", "minLength": 1 },
+          "serial": { "type": "string", "minLength": 1 },
+          "firmware_version": { "type": "string", "minLength": 1 },
+          "bitstream_version": { "type": "string", "minLength": 1 },
+          "golden_upgrade_allowed": { "type": "boolean", "default": false }
+        },
+        "additionalProperties": false
+      }
+    },
+    "connections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "signal", "purpose"],
+        "properties": {
+          "from": { "type": "string" },
+          "to": { "type": "string" },
+          "signal": { "type": "string" },
+          "purpose": { "type": "string", "enum": ["swd", "uart", "spi", "logic_capture", "gpio", "power", "ground"] }
+        },
+        "additionalProperties": false
+      }
+    },
+    "allowed_state_changing_actions": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["flash", "reset", "drive_pin", "mock_start", "mock_stop", "firmware_update", "bitstream_update"] }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+dist/
+build/
+*.egg-info/
+
+# Firmware / FPGA build outputs
+firmware/build/
+fpga/build/
+*.elf
+*.bin
+*.bit
+*.jou
+*.log
+*.rpt
+*.dcp
+
+# Local artifacts
+artifacts/
+runs/
+.agentprobe/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

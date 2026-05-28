@@ -1,0 +1,24 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "agentprobe"
+version = "0.1.0"
+description = "AI-native physical verification CLI for embedded development"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "click>=8.1",
+]
+
+[project.scripts]
+ap = "agentprobe.cli.app:main"
+agentprobe = "agentprobe.cli.app:main"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

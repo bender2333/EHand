@@ -1,0 +1,64 @@
+{
+  "status": "ok",
+  "terminal_state": "regression_pass",
+  "verdict": "replay self-hosting loop evidence supports the expected DUT behavior",
+  "confidence": "high",
+  "next_action": "proceed to device identity and topology enforcement",
+  "evidence": {
+    "schema_version": "0.1.0",
+    "run_id": "run_replay_self_hosting_001",
+    "trace_id": "trace_replay_self_hosting_001",
+    "source_device_role": "golden",
+    "target_device_role": "dut",
+    "device_id": "ap_dut_replay",
+    "serial": "APD-REPLAY-001",
+    "firmware_version": "0.1.0-replay",
+    "bitstream_version": "0.1.0-replay",
+    "connection_topology_id": "topology_self_hosting_replay_v1",
+    "source_device": {
+      "role": "golden",
+      "device_id": "ap_golden_replay",
+      "serial": "APG-REPLAY-001",
+      "firmware_version": "0.1.0-replay",
+      "bitstream_version": "0.1.0-replay"
+    },
+    "target_device": {
+      "role": "dut",
+      "device_id": "ap_dut_replay",
+      "serial": "APD-REPLAY-001",
+      "firmware_version": "0.1.0-replay",
+      "bitstream_version": "0.1.0-replay"
+    },
+    "build_result": {
+      "status": "ok",
+      "artifact": "artifacts/replay/dut_firmware.elf",
+      "hash": "sha256:replay-build-hash"
+    },
+    "flash_result": {
+      "status": "ok",
+      "method": "cmsis-dap-v2",
+      "target_role": "dut"
+    },
+    "capture_result": {
+      "status": "ok",
+      "signals": ["uart_tx", "spi_sck", "spi_mosi", "spi_miso"],
+      "summary": "DUT emitted expected UART boot marker and SPI transaction"
+    },
+    "diagnosis_result": {
+      "status": "ok",
+      "diagnosis": "observed behavior matches replay expectation",
+      "bottleneck_class": "none"
+    },
+    "regression_result": {
+      "status": "ok",
+      "nominal_path": "passed",
+      "failure_path": "not_executed_in_nominal_fixture"
+    },
+    "verdict": "regression_pass",
+    "confidence": "high",
+    "escalation_reason": null,
+    "artifact_refs": [
+      "scenarios/replay/nominal/self_hosting_replay.json"
+    ]
+  }
+}

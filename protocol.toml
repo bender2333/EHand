@@ -1,0 +1,94 @@
+# AgentProbe protocol SSOT.
+# This file owns cross-domain message types, event types, terminal states,
+# role names, confidence levels, and schema version identifiers.
+
+[versions]
+protocol = "0.1.0"
+outcome_schema = "0.1.0"
+evidence_schema = "0.1.0"
+scenario_schema = "0.1.0"
+topology_schema = "0.1.0"
+skill_schema = "0.1.0"
+
+[generation]
+generated_hash_algorithm = "sha256"
+generated_hash_required = true
+generated_files = [
+  "cli\\src\\agentprobe\\protocol\\_generated.py",
+  "firmware\\include\\ap_protocol_generated.h",
+  "fpga\\rtl\\include\\ap_protocol_generated.vh",
+]
+
+[roles]
+allowed = ["golden", "dut", "external_target", "host"]
+
+[terminal_states]
+allowed = [
+  "regression_pass",
+  "explicit_escalation",
+  "unsupported",
+  "unknown",
+  "approval_pending",
+]
+
+[confidence]
+allowed = ["high", "medium", "low"]
+
+[message_types]
+device_status_request = 0x0001
+device_status_response = 0x8001
+topology_validate_request = 0x0002
+topology_validate_response = 0x8002
+run_start_request = 0x0003
+run_start_response = 0x8003
+flash_request = 0x0010
+flash_response = 0x8010
+capture_start_request = 0x0020
+capture_start_response = 0x8020
+mock_config_request = 0x0030
+mock_config_response = 0x8030
+diagnose_request = 0x0040
+diagnose_response = 0x8040
+approval_required = 0x00F0
+error_response = 0x80FF
+
+[event_types]
+run_started = 0x1001
+build_result = 0x1002
+flash_result = 0x1003
+capture_result = 0x1004
+diagnosis_result = 0x1005
+regression_result = 0x1006
+terminal_outcome = 0x1007
+heartbeat = 0x1008
+uart_frame = 0x1101
+logic_edge = 0x1102
+spi_transaction = 0x1103
+approval_requested = 0x1201
+safety_refused = 0x1202
+
+[error_codes]
+ok = 0
+invalid_request = 100
+schema_mismatch = 101
+unsupported_boundary = 102
+unknown_device_identity = 103
+topology_mismatch = 104
+approval_required = 105
+safety_refused = 106
+transport_error = 200
+device_timeout = 201
+internal_error = 500
+
+[state_changing_actions]
+allowed_requires_identity = [
+  "flash",
+  "reset",
+  "drive_pin",
+  "mock_start",
+  "mock_stop",
+  "firmware_update",
+  "bitstream_update",
+]
+
+golden_upgrade_mode_default = "disabled"
