@@ -74,6 +74,10 @@ Do NOT present options you'd never recommend — if you'd never pick it, say so.
 
 这些是方向与约束，不是实现指令；但若被破坏，即使测试通过也算 epic 没做对。
 
+**plan 与 tasks.md 的关系（单一来源）：** epic plan 用 `T-NN` 编号**引用** `tasks.md` 的任务定义，
+不重复抄任务描述。每个 plan 顶部必须有一行指针明确"Scope tasks 的完整定义见 `tasks.md`（§T-NN）"，
+让 Codex 知道去哪查定义。plan 自包含的是 tasks.md 没有的部分：验收标准 + 架构要点。
+
 ## Phase Protocol
 
 Explicitly track which phase we're in:
