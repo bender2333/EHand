@@ -1,7 +1,7 @@
 #ifndef AP_SHARED_H
 #define AP_SHARED_H
 
-#define AP_PROTOCOL_VERSION "0.1.0"
+#define AP_PROTOCOL_VERSION "0.2.0"
 
 typedef enum ap_err {
     AP_OK = 0,

@@ -30,3 +30,10 @@ runs/
 Thumbs.db
 .vscode/
 .idea/
+
+# Agent / tooling local dirs (keep tracked .claude/settings.local.json)
+.codegraph/
+.serena/
+.cursor/
+.claude/*
+!.claude/settings.local.json

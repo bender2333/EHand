@@ -3,12 +3,13 @@
 # role names, confidence levels, and schema version identifiers.
 
 [versions]
-protocol = "0.1.0"
-outcome_schema = "0.1.0"
-evidence_schema = "0.1.0"
-scenario_schema = "0.1.0"
-topology_schema = "0.1.0"
-skill_schema = "0.1.0"
+protocol = "0.2.0"
+outcome_schema = "0.2.0"
+evidence_schema = "0.2.0"
+scenario_schema = "0.2.0"
+topology_schema = "0.2.0"
+skill_schema = "0.2.0"
+mock_model_schema = "0.2.0"
 
 [generation]
 generated_hash_algorithm = "sha256"
@@ -33,6 +34,22 @@ allowed = [
 
 [confidence]
 allowed = ["high", "medium", "low"]
+
+[mock_fidelity]
+# Mock 行为模型保真度级别 (架构 §7.5)。任何经 mock 得出的证据必须声明 level。
+allowed_levels = ["L1", "L2", "L3", "L4"]
+v1_max_level = "L3"            # V1 实现到 L3;L4 (时序/电气保真) 为 planned
+diff_detection = "planned"    # mock-vs-real 自动分歧检测为 planned,V1 不实现
+
+[bottleneck]
+# 闭环受限原因分类 (架构 §14.3),写入 Evidence Envelope.bottleneck。
+allowed = [
+  "observation_gap",
+  "execution_gap",
+  "semantic_translation_gap",
+  "agent_reasoning_gap",
+  "support_boundary_gap",
+]
 
 [message_types]
 device_status_request = 0x0001

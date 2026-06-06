@@ -5,29 +5,23 @@
   "confidence": "high",
   "next_action": "proceed to device identity and topology enforcement",
   "evidence": {
-    "schema_version": "0.1.0",
+    "schema_version": "0.2.0",
     "run_id": "run_replay_self_hosting_001",
     "trace_id": "trace_replay_self_hosting_001",
-    "source_device_role": "golden",
-    "target_device_role": "dut",
-    "device_id": "ap_dut_replay",
-    "serial": "APD-REPLAY-001",
-    "firmware_version": "0.1.0-replay",
-    "bitstream_version": "0.1.0-replay",
     "connection_topology_id": "topology_self_hosting_replay_v1",
     "source_device": {
       "role": "golden",
       "device_id": "ap_golden_replay",
       "serial": "APG-REPLAY-001",
-      "firmware_version": "0.1.0-replay",
-      "bitstream_version": "0.1.0-replay"
+      "firmware_version": "0.2.0-replay",
+      "bitstream_version": "0.2.0-replay"
     },
     "target_device": {
       "role": "dut",
       "device_id": "ap_dut_replay",
       "serial": "APD-REPLAY-001",
-      "firmware_version": "0.1.0-replay",
-      "bitstream_version": "0.1.0-replay"
+      "firmware_version": "0.2.0-replay",
+      "bitstream_version": "0.2.0-replay"
     },
     "build_result": {
       "status": "ok",
@@ -57,6 +51,8 @@
     "verdict": "regression_pass",
     "confidence": "high",
     "escalation_reason": null,
+    "bottleneck": null,
+    "mock_fidelity": null,
     "artifact_refs": [
       "scenarios/replay/nominal/self_hosting_replay.json"
     ]

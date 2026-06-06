@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentprobe.dev/schemas/mock_model.schema.json",
+  "title": "AgentProbe Mock Model",
+  "description": "v0.2.0 — declarative peripheral mock model with optional script escape hatch. Architecture §7.2.",
+  "type": "object",
+  "required": ["meta", "registers", "timing", "responses", "state_machine"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["id", "peripheral_type", "version", "fidelity_level"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "peripheral_type": {
+          "type": "string",
+          "enum": ["spi_slave", "i2c_device", "uart_device", "can_node", "one_wire", "pwm"]
+        },
+        "version": { "type": "string", "minLength": 1 },
+        "fidelity_level": { "type": "string", "enum": ["L1", "L2", "L3", "L4"] },
+        "description": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "registers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["addr", "reset_value", "access"],
+        "properties": {
+          "addr": { "type": "integer", "minimum": 0 },
+          "reset_value": { "type": "integer", "minimum": 0 },
+          "access": { "type": "string", "enum": ["ro", "rw", "wo", "w1c"] },
+          "side_effect": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "timing": {
+      "type": "object",
+      "required": ["max_freq_hz"],
+      "properties": {
+        "clock_polarity": { "type": "integer", "enum": [0, 1] },
+        "clock_phase": { "type": "integer", "enum": [0, 1] },
+        "max_freq_hz": { "type": "integer", "minimum": 1 },
+        "busy_duration_us": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "responses": {
+      "type": "object",
+      "required": ["entries"],
+      "properties": {
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["command", "data"],
+            "properties": {
+              "command": { "type": "integer", "minimum": 0 },
+              "data": {
+                "type": "array",
+                "items": { "type": ["integer", "string"] }
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "state_machine": {
+      "type": "object",
+      "required": ["states", "transitions"],
+      "properties": {
+        "states": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "transitions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["from", "to", "trigger"],
+            "properties": {
+              "from": { "type": "string" },
+              "to": { "type": "string" },
+              "trigger": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "behavior_hook": {
+      "type": ["object", "null"],
+      "description": "Optional PC Behavior Layer script escape hatch (architecture §7.1/§7.2).",
+      "required": ["runtime", "path", "entrypoints"],
+      "properties": {
+        "runtime": { "type": "string", "enum": ["lua", "python"] },
+        "path": { "type": "string", "minLength": 1 },
+        "entrypoints": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

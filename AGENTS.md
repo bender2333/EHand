@@ -1,223 +1,157 @@
-# AgentProbe — Autonomous Agent Instructions
+## 三份控制文件（先读它们）
 
-You are an autonomous software engineering agent executing the **AgentProbe** project.
+| 文件 | 作用 | 能改吗 |
+|---|---|---|
+| `NORTH_STAR.md` | 终极目标 + done 的定义（验收门） | 只读，禁改 |
+| `LOOP.md` | 长任务自动闭环协议（循环体/硬边界/git/subagent） | 偶尔补充 |
+| `NEXT.md` | 跨 session 交接（focus/last/next/BLOCKs） | 每次更新 |
 
-## Primary Mission (北极星目标)
+长任务自动模式（用户说"自动推进/闭环做完"或 `/loop`）一律按 `LOOP.md` 执行。
 
-> **Make physical verification agent-executable.**
-> 让 AI Agent 第一次能自己验证嵌入式代码在物理世界里是否真的工作。
+## Session Startup Protocol
 
-Keep this mission visible in every decision. When in doubt about priority, scope, or tradeoffs, ask:
+每个 session，动手写代码前：
 
-> **Does this move us closer to a working, auditable, agent-executable physical verification loop?**
+1. 读 `NORTH_STAR.md` — 终极目标，永不修改。
+2. 读 `NEXT.md` — 上一个 session 留给你的交接。
+3. 读今天的日志了解上下文（架构师看 `docs/journal/architect/`，实现 agent 看 `docs/journal/codex/` 最近文件）。按"日志分流"约定决定自己写哪个文件。
+4. 跑 `git status`。不干净就先看清是什么，再决定（自动模式下按 LOOP.md §5 处理工作分支）。
+5. 用 `todowrite` 基于 NEXT.md 的 "Next Action" 排计划。
+6. 在自己的日志文件写一行 `HH:MM - Session start`（实现 agent 新建带时间戳的文件）。
 
-If not, deprioritize it or flag it in `ISSUES_AND_DEVIATIONS.md`.
+## Session Shutdown Protocol
 
-## Required Input Documents
+暂停、context 将满、或做完一块时：
 
-Before coding, read the current project documents:
+1. 往自己的日志文件追加进度（按"日志分流"约定）。
+2. 更新 `NEXT.md`：current focus / last action / next action / open BLOCKs。
+3. 把完成的工作 commit + push 到工作分支（自动模式见 LOOP.md §5）。
+4. 不要为多撑一会儿而疯狂压缩 context——干净收尾，让下一轮从 NEXT.md 续上。
 
-1. `prd_v1.2.md` — current PRD, including v1.4 updates.
-2. `_bmad-output\architecture.md` — current architecture document.
-3. `tasks.md` — baseline implementation task list.
+## Journal（每日日志）— 强制，必须用中文写
 
-Confirm understanding of:
+**日志分流（防多 agent 互相覆盖）**：本项目有多个 agent 并行工作，各写各的日志，绝不共写一个文件：
+- **实现 agent（codex / worker）**：每次循环/任务**新建**一个文件 `docs/journal/codex/YYYY-MM-DD-HHMM-<topic>.md`。不要追加别人的旧文件，不要写 `docs/journal/YYYY-MM-DD.md`。
+- **架构师 agent（claude，设计/review/调研）**：写 `docs/journal/architect/YYYY-MM-DD.md`（按天追加）。
+- 旧的 `docs/journal/YYYY-MM-DD.md` 是分流前的合并历史，**只读保留**，谁都不再往里写。
 
-- The V1 North Star: **two-board self-hosting validation**.
-- The hardware roles: `golden`, `dut`, and `external_target`.
-- The V1 supported boundary:
-  - AgentProbe product hardware: Zynq-7020 SoM + minimal baseboard.
-  - Target hardware: DUT AgentProbe and STM32 M3/M4/M33 external targets.
-  - Toolchain: `arm-none-eabi-gcc`, OpenOCD/pyOCD, CMSIS-DAP v2.
-  - Protocol path: SPI-first Mock/Analyzer, UART bridge/snoop, 8-channel logic capture.
-  - I2C/SHT30 demo: Phase 1.5 / external reference demo, not a Phase 1 self-hosting gate.
-- The dual-output contract: human-readable default and `--json` for Agent consumption.
-- The terminal outcomes: `regression_pass`, `explicit_escalation`, `unsupported`, `unknown`, and `approval_pending`.
-- The required proof: Golden AgentProbe helps an Agent develop, flash, observe, diagnose, and fix DUT AgentProbe with auditable evidence.
-- The observability formula: Agent closed-loop capability is limited by `min(reasoning capability, observable range, executable range, semantic translation quality)`.
+为每个有意义的动作写一条，时间精确到分钟（`HH:MM`）。
 
-## Execution Mode
+"有意义"包括：
+- Session 开始 / 结束
+- 一次 build / test / e2e 运行（带结果 PASS/FAIL/SKIP）
+- 对某条 NORTH_STAR / Task 验收门的验证结果
+- 一个值得记的发现（bug、测量、假设）
+- 一个决策（若是阻塞级，同时进 `docs/decision.md`）
+- 一次 subagent 派发及其结论
 
-Operate in fully autonomous mode.
+格式：
 
-### Rule 1 — Auto-Execute First
+```
+# Journal 2026-05-29 (codex / int-task-B6)
 
-For every task:
+## 14:32 - 任务开始
+- 读 NORTH_STAR.md, NEXT.md
+- Focus: B-6 childDagRunId 字段
 
-- Default action is to implement it, not ask for permission.
-- Pause only for a genuine blocker that cannot be resolved from the documents.
-- When pausing, state exactly what is needed and why.
-
-### Rule 2 — Work Through the Task List Sequentially
-
-Process tasks in the order given in `tasks.md`. For each task:
-
-1. State: `[TASK N/13 STARTING] — <task name>`
-2. Implement fully.
-3. Write tests where applicable.
-4. State: `[TASK N/13 COMPLETE] — <summary of what was built>`
-
-Do not skip tasks. Do not reorder tasks without logging the reason in `ISSUES_AND_DEVIATIONS.md`.
-
-### Rule 3 — Keep the Primary Mission Visible
-
-At the start of every task, write one sentence connecting the task to the Primary Mission.
-
-Example:
-
-> This task implements the `--json` output contract, which is the core interface allowing the Agent to consume physical verification results.
-
-### Rule 4 — Never Silently Fail
-
-If a task cannot be fully completed:
-
-- State clearly: `[TASK N/13 BLOCKED]`.
-- Explain what is missing, what was attempted, and what is needed to unblock.
-- Log it in `ISSUES_AND_DEVIATIONS.md`.
-- Move to the next task only if the dependency graph allows it.
-
-## Mandatory Output Documents
-
-Maintain and update both documents throughout execution:
-
-- `IMPLEMENTATION_LOG.md` — what was built, decisions made, and current status.
-- `ISSUES_AND_DEVIATIONS.md` — conflicts, gaps, ambiguity, deviations, and concerns.
-
-Update them in real time, not only at the end.
-
-## Coding Standards
-
-### CLI & JSON Contract
-
-- Every command must support `--json`.
-- JSON output must be valid and parseable.
-- JSON output schema must include at minimum:
-
-```json
-{
-  "status": "...",
-  "terminal_state": "...",
-  "evidence": {},
-  "verdict": "...",
-  "confidence": "high|medium|low",
-  "next_action": "..."
-}
+## 14:50 - B-6 单测
+- cmd: pnpm test src/shared
+- result: PASS (12 passed)
+- commit: <hash>
 ```
 
-- Human-readable output must be semantically equivalent to JSON output.
-- Never produce different conclusions between human and JSON output modes.
+条目要短，用 bullet，不写散文。链接产物（日志路径、commit hash），不要复述。
 
-### Terminal States
+---
 
-Every task execution path must resolve to exactly one of:
+## Subagents — 尽量用，保持主上下文干净
 
-- `regression_pass` — evidence supports success.
-- `explicit_escalation` — evidence is insufficient, boundary exceeded, or recovery is unsafe.
-- `unsupported` — outside V1 boundary.
-- `unknown` — system cannot determine.
-- `approval_pending` — human authorization is required before a state-changing or high-risk action.
+长任务最大的敌人是 context 被原始材料塞满。规则：
 
-### Evidence Package
+- **扇出型工作一律派 subagent**：读多个文件、跨目录搜索、调研某模块、跑多组验证、
+  审查一片代码。主上下文只接收**结论**，不接收被读文件的原文。
+- **探索用只读 subagent**（Explore 类）：定位"X 在哪、谁调用 Y、命名约定是什么"，
+  让它返回 file:line 和结论，不要把整文件拉回主上下文。
+- **本项目有 CodeGraph + Serena**：结构性问题（谁调谁、改 Z 会炸什么、X 签名）优先用
+  `codegraph_*`，比 grep 快且准；不要为查一个符号先 grep。
+- 每次 subagent 派发 + 它的结论，记一行 journal。
+- 实现类工作（要改代码、连续编辑同一批文件）留在主线做，别派出去——派出去反而对不上账。
 
-Every run must produce a structured evidence package containing:
+## Commit Guidelines（自动 commit + push）
 
-- `run_id`
-- `trace_id`
-- `source_device_role`
-- `target_device_role`
-- `device_id`
-- `serial`
-- `firmware_version`
-- `bitstream_version`
-- `connection_topology_id`
-- `source_device`
-- `target_device`
-- `build_result`
-- `flash_result`
-- `capture_result`
-- `diagnosis_result`
-- `regression_result`
-- `verdict`
-- `confidence`
-- `escalation_reason` when applicable
+自动循环里，每个**验证通过**的小块就提交一次。用 conventional commits（`fix:`/`feat:`/`docs:`/`chore:`）。
+有具体验证产物时带 `Verified-By:` trailer：
 
-### Safety
+```
+feat(planner): emit WorkflowIntent without nodeRuns
 
-- All state-changing hardware operations must check role, device identity, topology, and safety blacklist before execution.
-- Blacklisted operations require explicit user authorization scoped to that single action.
-- Golden firmware/bitstream update mode is disabled by default.
-- DUT build artifacts must never be applied to Golden unless a human explicitly authorizes Golden upgrade mode for that specific device and artifact.
-- The system must never execute a blacklisted action silently or reuse prior authorization.
-
-### Reproducibility
-
-- Session configs, routing rules, mock definitions, topology definitions, and failure catalogs must be file-based and versionable.
-- No required state may exist only ephemerally if it is needed to reconstruct a run.
-
-### Skill Capability Boundary
-
-Every Skill file must declare:
-
-- `supported_capabilities`
-- `not_supported`
-- `planned_capabilities`
-
-Agents must treat `planned_capabilities` as roadmap only, not as executable V1 capability.
-
-## Scope Guard
-
-### V1 In Scope
-
-- AgentProbe product hardware: Zynq-7020 SoM + minimal baseboard.
-- Target hardware: DUT AgentProbe and STM32 M3/M4/M33 external targets.
-- Toolchain: `arm-none-eabi-gcc`, OpenOCD/pyOCD, CMSIS-DAP v2.
-- Protocols: SPI-first Mock/Analyzer, UART bridge/snoop.
-- Capture: 8-channel logic analysis.
-- Interface: Python CLI (`ap`) + local daemon + Skill files.
-- Output: human-readable + `--json`.
-- Phase 1 acceptance: Golden AgentProbe validates DUT AgentProbe through a repeatable self-hosting loop.
-
-### V1 Out of Scope
-
-Flag and defer:
-
-- MCP / REST API / Python SDK / IDE plugin.
-- Cloud sync or remote execution.
-- Non-STM32 external targets.
-- More than 8 capture channels.
-- GUI or web dashboard.
-- I2C/SHT30 as a Phase 1 self-hosting gate.
-
-## Acceptance Criteria Checkpoint
-
-After all 13 tasks are complete, run a final self-assessment:
-
-```markdown
-## Final Acceptance Check
-
-[ ] ap flash — can flash target, outputs structured result
-[ ] ap capture — can capture 8ch signals, outputs semantic JSON
-[ ] ap mock start spi — SPI mock engine operational
-[ ] ap diagnose — produces structured diagnosis with confidence + escalation
-[ ] ap regression run — executes nominal + failure path, produces terminal state
-[ ] ap report — generates final evidence-backed report
-[ ] --json flag — all commands produce parseable, schema-valid JSON
-[ ] Self-hosting scenario — Golden AgentProbe validates DUT AgentProbe end-to-end
-[ ] Optional external demo — I2C SHT30 → UART → SPI Flash, if Phase 1.5 is selected
-[ ] Skill file — agent can discover capabilities and constraints
-[ ] IMPLEMENTATION_LOG.md — complete, up to date
-[ ] ISSUES_AND_DEVIATIONS.md — all issues logged with decisions recorded
+Verified-By: pnpm test src/server/planner (8 passed)
 ```
 
-If any item fails, log it as `[FINAL BLOCKER]` in `ISSUES_AND_DEVIATIONS.md`.
+- 工作分支：禁止直接提交 `main`。自动模式切到 `work/v01a` 提交（见 LOOP.md §5）。
+- 每次 commit 后 push 到 origin 工作分支（已配 SSH）。首次 `git push -u origin work/v01a`。
+- 纯文档改动可省 `Verified-By`。
+- 不自动开 PR、不自动并 main——等人。
+- 不用交互式 git（`-i`），不加 `--no-verify`，不动 git config。
 
-## Start Command
+---
 
-Begin by:
+## 卡住时怎么办（对齐 LOOP.md §3 硬边界）
 
-1. Confirming you have read the PRD, architecture, and task list.
-2. Writing a one-paragraph summary of the Primary Mission.
-3. Creating or updating `IMPLEMENTATION_LOG.md` and `ISSUES_AND_DEVIATIONS.md`.
-4. Beginning Task 01.
+1. 重读 `NEXT.md` 与当前 Task 的"验收门槛"。
+2. 重读 NORTH_STAR 对应的 NS 条目和 done 定义。
+3. 自查设计稿 / tasks-detailed / 验收门三份文档，答案多半在里面。
+4. 仍然卡住，且属于 LOOP.md §3 的硬边界（真歧义 / 不可逆操作 / 同问题失败 2 次）：
+   在 journal 和 NEXT.md 的 open BLOCKs 写清"卡在哪、试过什么、要什么决定"，然后**停**。不要猜。
 
-Do not ask for permission. Execute.
+---
+
+## 编码规则
+
+### 1. 先想再写
+不假设、不藏困惑、把权衡摆出来。实现前：说清假设；有多种解释就都列出来别默默选；有更简单的路就说；不清楚就停下指明困惑点再问。
+
+### 2. 简单优先
+能解决问题的最小代码，不写投机性的东西。不加没要求的特性/抽象/可配置；不为不可能的情况写错误处理。写了 200 行但 50 行能搞定，就重写。
+
+### 3. 外科手术式改动
+只动必须动的。改既有代码时：不"顺手优化"邻近代码/注释/格式；不重构没坏的东西；匹配既有风格即使你有别的偏好；看到无关死代码——提一句，别删。你的改动产生的孤儿（import/变量/函数）才清理。每一行改动都能追溯到当前需求。
+
+### 4. 目标驱动执行
+把任务变成可验证的目标："加校验"→"为非法输入写测试再让它过"；"修 bug"→"先写复现测试再让它过"。多步任务先列简短计划，每步带 verify。强 success criteria 才能独立循环；弱的（"让它能用"）会逼出反复澄清。
+
+### 5. 确定性的事不用 LLM
+LLM 用于：分类、起草、摘要、从非结构化文本抽信息。**不要**用 LLM 做：路由、重试、状态码处理、确定性转换。状态码已经能回答的问题，就让普通代码回答。
+
+### 6. 暴露冲突，不要折中
+两个既有模式矛盾时：选一个（偏向更新/更经过测试的），说明理由，把另一个标记为待清理。同时满足两套矛盾规则的代码比任一种都糟。
+
+### 7. 先读再写
+往文件加代码前：读它的导出、直接调用方、明显共享的工具。不理解既有结构为什么这样就先问，别硬加。"这跟我没关系吧"是代码库里最危险的一句话。
+
+### 8. 测试要编码意图，不只是行为
+每个测试要编码"为什么这行为重要"，不只是"它做了什么"。`expect(getUserName()).toBe('John')` 在函数收到硬编码 ID 时一文不值。写不出一个"业务逻辑变了就会失败"的测试，说明函数本身有问题。不要从"只验证函数返回了点东西"的测试里宣称信心。
+
+### 9. 长任务设检查点
+多步任务每步后小结：做了什么、验证了什么、还剩什么。丢失进度就停下重述现状再继续。步骤 4 的错误被 5、6 接着建，比重来更贵。
+
+### 10. 约定优于新意
+代码库用 `snake_case` 你偏好 `camelCase`，就用 `snake_case`。真觉得某约定有害，明说，别默默 fork 出第二套模式。一套一致的模式好过两套（哪怕第二套更好）。
+
+### 11. 大声失败，绝不静默
+看起来像成功的失败最贵。别在 30 条记录被静默跳过时说"迁移完成"；别在有测试被跳过时说"测试通过"；别在没验证边界时说"功能可用"。不确定就说不确定。
+
+### 12. 验收标准是规格，不是变量 ★本项目铁律
+当前 goal 对应的 epic plan（`docs/plans/E<N>-*.md`）里的 **Goal Done + 集成测试标准**就是 done 的定义。
+测不过 = 系统有缺陷 → **修系统，绝不改测试、绝不放宽断言、绝不删用例**。
+plan 没覆盖到的设计抉择属 LOOP.md §3 硬边界：停下，写进 NEXT.md open BLOCKs，不要猜。
+
+---
+
+## 文档与语言
+
+- 后续所有文档和注释用**中文**。
+- 代码标识符、commit type 前缀、API 字段名保持英文（对齐既有代码）。
+
+
+

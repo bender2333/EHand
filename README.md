@@ -4,6 +4,8 @@ _Primary Mission: Make physical verification agent-executable._
 
 AgentProbe is an AI-native embedded verification infrastructure project. Its Phase 1 North Star is a two-board self-hosting loop: a stable Golden AgentProbe helps an Agent build, flash, observe, diagnose, and fix a DUT AgentProbe with auditable evidence.
 
+> **Authoritative technical architecture:** [`ARCHITECTURE.md`](ARCHITECTURE.md) (v0.2.0) — modules, contracts, data planes, Mock Engine, and Mermaid diagrams. Historical PRD/product material is in [`archive/`](archive/README.md).
+
 ## Current Contract Baseline
 
 - Product hardware path: Zynq-7020 SoM + minimal baseboard.
@@ -16,14 +18,17 @@ AgentProbe is an AI-native embedded verification infrastructure project. Its Pha
 
 | Path | Purpose |
 |------|---------|
-| `cli\` | Python CLI, daemon, protocol models, output formatters, tests |
-| `firmware\` | Zynq PS firmware, USB task, SWD task, event aggregation |
+| `ARCHITECTURE.md` | **Authoritative technical architecture (v0.2.0)** |
+| `protocol.toml` / `address_map.toml` | Cross-domain SSOT contracts |
+| `cli\` | Python CLI, daemon, protocol models, transport, **mock**, output formatters, tests |
+| `firmware\` | Zynq PS firmware, USB task, SWD task, Mock Command Layer, event aggregation |
 | `fpga\` | Zynq PL RTL, Vivado scripts, simulation, constraints |
 | `hardware\` | SoM baseboard, fixtures, cables, mechanical assets |
 | `scenarios\` | Versioned scenarios, replay fixtures, schemas |
 | `skills\` | AgentProbe Skill files and capability boundary |
 | `docs\` | Quickstarts, protocol docs, hardware docs, examples |
 | `scripts\` | Cross-domain bootstrap, verification, packaging scripts |
+| `archive\` | Historical PRD / architecture material (reference only) |
 
 ## First Implementation Priority
 

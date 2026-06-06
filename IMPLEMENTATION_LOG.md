@@ -25,6 +25,44 @@ I have read the current PRD (`prd_v1.2.md` with v1.4 updates), architecture (`_b
 | 12 | Write Skill quickstart assets | Pending |  |
 | 13 | Prepare external reference demo | Pending |  |
 
+## Architecture & Contract Rewrite (v0.2.0) — 2026-06-06
+
+The PRD-flavored, prose-heavy architecture documents were replaced with a single authoritative, module-based, Mermaid-driven [`ARCHITECTURE.md`](ARCHITECTURE.md). Driver: the previous architecture mixed PRD/debate content, lacked clean module decomposition, interface specs, and diagrams.
+
+**Decisions (confirmed with user):**
+
+- Clean-slate technical architecture rewrite; contracts redesigned alongside. V1 North Star unchanged (two-board self-hosting loop).
+- **Mock Engine is the differentiator core** with a deep sub-architecture (ARCHITECTURE.md §7: three-layer execution model, declarative MockModel + script escape hatch, SPI slave internals, behavior state machine, fidelity model L1–L4, config sequence). SWD/analyzer/UART are must-be-solid base capabilities, each with a full sub-architecture (§8).
+- Mock model format = declarative data model + script escape hatch (`mock_model.schema.json`). Mock fidelity = provenance declaration only in V1 (`mock_fidelity`); mock-vs-real auto diff detection is planned.
+
+**Contract changes (0.1.0 → 0.2.0):**
+
+- Evidence Envelope de-duplicated: removed redundant top-level `device_id`/`serial`/`firmware_version`/`bitstream_version` and `*_role`; identity now only in `source_device`/`target_device`. Added optional `bottleneck` and `mock_fidelity`.
+- New `mock_model.schema.json`; `protocol.toml` gained `[mock_fidelity]` and `[bottleneck]`; all schema/`ap_shared.h`/package versions synced to 0.2.0. See `docs/protocol/version-matrix.md`.
+
+**Code alignment:** new `models/evidence.py` (de-duplicated EvidenceEnvelope), `transport/` abstraction (`base.py` Protocol + USB/Mock stubs), `mock/` host module (load/validate model, fidelity provenance), updated replay fixture + tests + `generate_protocol.py`.
+
+**Docs:** old PRD/architecture/analysis moved to `archive/`; `README.md`, `AGENTS.md`, `tasks.md` re-pointed to `ARCHITECTURE.md` and 0.2.0 contracts.
+
+**Verification:** all schemas/TOML/fixture parse; fixture passes `evidence.schema.json` v0.2.0 (jsonschema); `compileall` OK; 2 unit tests pass (incl. new de-dup assertion); `scenario run --replay --json` returns `regression_pass` with de-duplicated envelope; version consistency 0.2.0 across protocol.toml / schemas / ap_shared.h / package; 19 Mermaid blocks lint-clean.
+
+## AI-Native Service Layering (ARCHITECTURE.md §15) — 2026-06-06
+
+Added the authoritative six-layer service stack to clarify how AgentProbe serves today's off-the-shelf Agents and a future self-built Agent + RAG on one base.
+
+**Decisions (confirmed with user):**
+
+- **Capability plane vs reasoning plane split (new principle P9):** the capability service layer is a headless core exposing one transport-agnostic semantic contract (Capability / Evidence / Verdict). CLI, GUI, MCP are peer clients — none is "the API". Source of truth is declarative files + the evidence store, not any single RPC.
+- **MCP is a convenience binding, not the API** — justified because the source of truth is files + evidence, so a future self-built Agent/RAG reads the same artifacts and is not locked to MCP.
+- **GUI retained as the human supervision/analysis client** (read-only observation + approvals), peer to the Agent, not the product itself.
+- **Communication is transport-agnostic:** local cross-process IPC now (local-first), network bindings (gRPC/REST/WS) later by swapping the binding only — the four upper layers don't move.
+- **Knowledge layer normalized now, RAG deferred:** diagnosis knowledge / Mock model library / failure catalog unified behind a `KnowledgeStore` interface (`list`/`get`/naive `search`); future RAG implements `search()` without touching callers. Only structural addition is `knowledge/`.
+- **Reasoning layer seat reserved, empty in V1;** the §14.3 `agent_reasoning_gap` bottleneck is the signal for when to invest in a self-built reasoning layer.
+
+**Doc edits:** new §15 (six-layer stack + service/client Mermaid + contract seam + knowledge normalization + reasoning seat + module projection + comms evolution); §12 收敛为演化路线时间轴并声明 §15 为权威分层(旧 Layer A/B/C/D 映射到 §15);§1/§3 旧"不自研 Agent/MCP/GUI"表述改为 headless core + 平级客户端 + 预留推理层座位 + GUI 保留;新增原则 P9。
+
+**Bug fix:** the previous rewrite had silently dropped the §8 body (基础能力层 SWD/analyzer/UART) due to a placeholder collision — only a leftover orphan line remained between §7.7 and §9. Restored §8.1–§8.3 in full. ARCHITECTURE.md now has sections 0–15 with no gaps and 26 lint-clean Mermaid blocks.
+
 ## Task Details
 
 ### Task 01 — Close AI-native contracts

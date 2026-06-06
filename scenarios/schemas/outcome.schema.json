@@ -13,7 +13,7 @@
     "evidence"
   ],
   "properties": {
-    "schema_version": { "const": "0.1.0" },
+    "schema_version": { "const": "0.2.0" },
     "status": { "type": "string", "enum": ["ok", "error", "blocked"] },
     "terminal_state": {
       "type": "string",
