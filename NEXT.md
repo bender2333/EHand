@@ -3,21 +3,18 @@
 _每次 session 结束更新此文件，让下一轮从这里续上。格式短、用 bullet。_
 
 ## Current Plan
-（尚无 epic plan 进入执行。等架构师 agent 在 `docs/plans/` 下产出第一个 epic plan
-并由人作为 goal 喂给 Codex 后，在此填写 `docs/plans/E<N>-*.md`。）
+- `docs/plans/E1-device-identity-single-board.md`（T-04/05/06）— Ready，可作为 goal 喂给 Codex。
 
 ## Current Focus
-- 项目刚完成架构 v0.2.0 重写 + 契约 0.2.0 + 长循环协议脚手架。
-- 实现进度：tasks.md 的 T-01..T-03 已完成（契约 / monorepo / replay-first loop）。
-- 下一个待规划的 epic：T-04 起（device identity topology + 单板地基），见 tasks.md。
+- E1：设备身份/拓扑 + 单板地基。T-04 纯软件可完整做完；T-05/06 会停在硬件交接物。
+- 项目已完成：架构 v0.2.0 + 契约 0.2.0 + 长循环协议脚手架 + E1 plan。
 
 ## Last Action
-- 建立长循环协议脚手架：NORTH_STAR.md / LOOP.md / NEXT.md / docs/decision.md / journal 目录。
-- 工程清理：删 _bmad/，归档旧 docx+html，.gitignore 忽略本地工具目录。
+- 架构师产出第一个 epic plan：E1（自带 Goal Done AC1-7 + 集成测试 IT1-2 + 硬件交接物 HW1-2 + 人工决策 DEC1）。
 
 ## Next Action
-- 等架构师 agent 出第一个 epic plan（建议 E1 = T-04/05/06，device identity + SoM 契约 + 单板地基）。
-- Codex 拿到该 plan 后按 LOOP.md 执行；当前无可自动推进项（无 plan 即不启动 goal）。
+- Codex：以 E1 plan 为 goal，按 LOOP.md 从 S1（devices 模块骨架）开始推进。
+- Goal Done = E1 plan 的 AC1-7 全绿 + 交接物齐。命中硬件门（HW1/HW2/DEC1）→ hard-stop 交还。
 
 ## Open BLOCKs
-- （无软件阻塞。硬件类阻塞会在对应 epic plan 进入 B 类门时出现。）
+- DEC1（人工）：SoM SKU 选定 — 等 Codex 产出 `docs/handoff/E1-som-selection.md` 候选后由人决策。
