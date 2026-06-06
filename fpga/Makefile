@@ -4,7 +4,7 @@ synth:
 	@echo "Vivado synth placeholder"
 
 sim:
-	@echo "Simulation placeholder"
+	python tools/run_sim.py
 
 clean:
 	@echo "FPGA clean placeholder"

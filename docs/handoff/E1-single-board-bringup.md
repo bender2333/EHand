@@ -46,8 +46,9 @@
 
 4. 交叉编译 firmware 和 RTL，确认产物可上板。
 
-   - 当前仓库只有协议生成头和最小 RTL 占位，尚未包含可烧录固件或 PL selftest。
-   - 当前 Codex 环境缺少可直接用于 CMake 的 C 编译器路径和 FPGA 仿真工具；不能把本步骤记为已通过。
+   - 当前仓库只有协议生成头和最小 RTL smoke test，尚未包含可烧录固件或真实 PL selftest。
+   - firmware CMake 可在 VS DevCmd + Ninja 下配置/构建。
+   - FPGA smoke 仿真入口为 `python fpga/tools/run_sim.py`，需要 `iverilog` + `vvp`；无仿真器环境下，`cli/tests/unit/test_fpga_smoke.py` 只做最小 RTL/testbench 结构检查。
 
 5. 人工烧录 Golden，执行最小 device status / PL selftest。
 
@@ -60,6 +61,7 @@
 - state-changing action 在缺 identity/topology 时不执行。
 - Golden firmware/bitstream upgrade 默认被守卫拒绝。
 - replay 输出保持 `terminal_state=regression_pass`，证据 schema version 为 0.2.0。
+- `python fpga/tools/run_sim.py` 输出 `AP_TOP_SMOKE_PASS` 才能证明最小 RTL 顶层可编译/可跑 testbench；若只跑 `test_fpga_smoke.py`，只能证明 testbench 与顶层端口声明一致，不等同真实 PL selftest。
 
 ## 验收判据
 

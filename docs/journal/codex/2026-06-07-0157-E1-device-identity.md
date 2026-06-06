@@ -28,3 +28,10 @@
 - fpga: 本机 PATH 未找到 make/yosys/svlint/slang/iverilog/verilator/vivado，未能执行 RTL 仿真；未声明 HW2 PASS
 - handoff: 写 `docs/handoff/E1-som-selection.md`、`docs/handoff/E1-single-board-bringup.md`
 - BLOCK: DEC1 SoM SKU 选定；真机 bring-up / PL selftest 需人工硬件环境
+
+## 02:40 - FPGA smoke 交接补强
+- 新增 `fpga/sim/ap_top_tb.v` + `fpga/tools/run_sim.py`；`fpga/Makefile sim` 调用该脚本
+- cmd: `$env:PYTHONPATH='cli/src;.'; python -m pytest cli/tests/unit/test_fpga_smoke.py`
+- result: PASS，最小 RTL/testbench 结构检查通过
+- cmd: `python fpga\tools\run_sim.py`
+- result: FAIL/SKIP，缺 `iverilog` + `vvp`；choco 安装因非管理员/锁文件失败，winget 卡交互协议确认
