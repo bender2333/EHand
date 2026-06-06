@@ -1,9 +1,13 @@
 import json
+from pathlib import Path
 from typing import Any
 
 import click
 
 from agentprobe.core.engine import run_replay_scenario
+from agentprobe.devices.topology import load_topology
+from agentprobe.protocol import _generated as protocol
+from agentprobe.transport.usb_transport import UsbTransport
 
 
 def _emit(payload: dict[str, Any], json_output: bool) -> None:
@@ -28,18 +32,41 @@ def device() -> None:
 
 
 @device.command("status")
+@click.option(
+    "--topology",
+    "topology_path",
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
+    help="Path to a declarative topology JSON file.",
+)
 @click.option("--json", "json_output", is_flag=True, help="Emit Agent-readable JSON.")
-def device_status(json_output: bool) -> None:
-    payload: dict[str, Any] = {
-        "status": "ok",
-        "terminal_state": "unknown",
-        "evidence": {
-            "schema_version": "0.1.0",
-            "reason": "repo_bootstrap_placeholder",
-        },
-        "verdict": "device transport not initialized",
+def device_status(topology_path: Path | None, json_output: bool) -> None:
+    if topology_path is None:
+        payload: dict[str, Any] = {
+            "schema_version": protocol.PROTOCOL_VERSION,
+            "status": "blocked",
+            "terminal_state": protocol.TERMINAL_UNKNOWN,
+            "error_code": protocol.ERR_UNKNOWN_DEVICE_IDENTITY,
+            "verdict": "device status requires a declared topology before identity is trusted",
+            "confidence": "low",
+            "next_action": "provide --topology with a schema-valid topology declaration",
+        }
+        _emit(payload, json_output)
+        return
+
+    topology = load_topology(topology_path)
+    hardware_status = UsbTransport().info()
+    devices_by_role = {device["role"]: device for device in topology.devices.values()}
+    payload = {
+        "schema_version": protocol.PROTOCOL_VERSION,
+        "status": "blocked",
+        "terminal_state": protocol.TERMINAL_UNKNOWN,
+        "error_code": hardware_status["error_code"],
+        "connection_topology_id": topology.connection_topology_id,
+        "devices": devices_by_role,
+        "hardware_status": hardware_status,
+        "verdict": "declared topology identity is available, but hardware transport is not connected",
         "confidence": "low",
-        "next_action": "run replay-first loop implementation",
+        "next_action": "connect AgentProbe USB transport before claiming physical device status",
     }
     _emit(payload, json_output)
 

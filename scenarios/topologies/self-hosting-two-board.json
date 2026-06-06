@@ -1,0 +1,81 @@
+{
+  "schema_version": "0.2.0",
+  "connection_topology_id": "self-hosting-two-board",
+  "devices": [
+    {
+      "role": "golden",
+      "device_id": "agentprobe-golden-001",
+      "serial": "AP-GOLDEN-PLACEHOLDER",
+      "firmware_version": "0.2.0-dev",
+      "bitstream_version": "0.2.0-dev",
+      "golden_upgrade_allowed": false
+    },
+    {
+      "role": "dut",
+      "device_id": "agentprobe-dut-001",
+      "serial": "AP-DUT-PLACEHOLDER",
+      "firmware_version": "0.2.0-dev",
+      "bitstream_version": "0.2.0-dev"
+    },
+    {
+      "role": "host",
+      "device_id": "host-controller-001",
+      "serial": "HOST-PLACEHOLDER",
+      "firmware_version": "host-cli-0.1.0",
+      "bitstream_version": "not-applicable"
+    }
+  ],
+  "connections": [
+    {
+      "from": "host-controller-001",
+      "to": "agentprobe-golden-001",
+      "signal": "usb",
+      "purpose": "uart"
+    },
+    {
+      "from": "agentprobe-golden-001",
+      "to": "agentprobe-dut-001",
+      "signal": "swdio-swclk-nreset",
+      "purpose": "swd"
+    },
+    {
+      "from": "agentprobe-golden-001",
+      "to": "agentprobe-dut-001",
+      "signal": "uart-tx-rx",
+      "purpose": "uart"
+    },
+    {
+      "from": "agentprobe-golden-001",
+      "to": "agentprobe-dut-001",
+      "signal": "spi-sck-mosi-miso-cs",
+      "purpose": "spi"
+    },
+    {
+      "from": "agentprobe-golden-001",
+      "to": "agentprobe-dut-001",
+      "signal": "logic-0-7",
+      "purpose": "logic_capture"
+    },
+    {
+      "from": "agentprobe-golden-001",
+      "to": "agentprobe-dut-001",
+      "signal": "vtref-3v3",
+      "purpose": "power"
+    },
+    {
+      "from": "agentprobe-golden-001",
+      "to": "agentprobe-dut-001",
+      "signal": "gnd",
+      "purpose": "ground"
+    }
+  ],
+  "allowed_state_changing_actions": [
+    "flash",
+    "reset",
+    "drive_pin",
+    "mock_start",
+    "mock_stop",
+    "firmware_update",
+    "bitstream_update"
+  ]
+}

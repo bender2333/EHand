@@ -1,9 +1,14 @@
 import json
 import unittest
+from pathlib import Path
 
 from click.testing import CliRunner
+import jsonschema
 
 from agentprobe.cli.app import main
+
+
+ROOT = Path(__file__).resolve().parents[3]
 
 
 class ReplayCliTests(unittest.TestCase):
@@ -31,6 +36,28 @@ class ReplayCliTests(unittest.TestCase):
             "target_device_role",
         ):
             self.assertNotIn(removed, evidence, f"{removed} should not be at top level")
+
+    def test_replay_outcome_and_evidence_match_contract_schemas(self) -> None:
+        result = CliRunner().invoke(main, ["scenario", "run", "--replay", "--json"])
+
+        self.assertEqual(result.exit_code, 0, result.output)
+        payload = json.loads(result.output)
+        evidence_schema = json.loads(
+            (ROOT / "scenarios" / "schemas" / "evidence.schema.json").read_text(encoding="utf-8")
+        )
+        outcome_schema = json.loads(
+            (ROOT / "scenarios" / "schemas" / "outcome.schema.json").read_text(encoding="utf-8")
+        )
+
+        jsonschema.validate(instance=payload["evidence"], schema=evidence_schema)
+        outcome_without_ref = {
+            **outcome_schema,
+            "properties": {
+                **outcome_schema["properties"],
+                "evidence": {"type": "object"},
+            },
+        }
+        jsonschema.validate(instance=payload, schema=outcome_without_ref)
 
 
 if __name__ == "__main__":

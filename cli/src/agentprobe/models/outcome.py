@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Any, Literal, TypedDict
 
+from agentprobe.protocol import _generated as protocol
+
 
 TerminalState = Literal[
     "regression_pass",
@@ -15,6 +17,7 @@ Confidence = Literal["high", "medium", "low"]
 
 
 class Outcome(TypedDict):
+    schema_version: str
     status: str
     terminal_state: TerminalState
     evidence: dict[str, Any]
@@ -33,6 +36,7 @@ def make_outcome(
     next_action: str,
 ) -> Outcome:
     return {
+        "schema_version": protocol.PROTOCOL_VERSION,
         "status": status,
         "terminal_state": terminal_state,
         "evidence": evidence,
