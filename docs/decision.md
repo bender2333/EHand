@@ -42,4 +42,10 @@ plan 自包含验收标准，goal 才能独立收敛。
 **Date:** 2026-06-06
 **Decision:** epic plan 统一放 `docs/plans/`。AGENTS.md 里 children-story-site 的 superpowers 路径
 是旧项目残留，已弃用。
-**Why:** 那条路径与 AgentProbe 无关，是复制残留。
+## D-7 — plan 的抽象层级：WHAT 不 HOW
+**Date:** 2026-06-06
+**Decision:** 架构师写的 epic plan 只定研发任务 + 验收意图 + 边界，不定实现细节。
+验收标准描述"什么算对"，不规定命令/文件名/错误码数值/模块拆分。实现路径交给 Codex。
+契约层 SSOT 是例外（可精确），但"如何测试契约"仍归 Codex。已固化进 CLAUDE.md。
+**Why:** 用户指出架构师是"需求→研发任务"的承载者，把 HOW 写死等于替聪明的 Codex 做了它更该做的决定，
+且让 plan 脆弱（实现一变 plan 就过时）。E1 plan 首版越界（写了 pytest -q / 文件名 / 错误码），已重写。

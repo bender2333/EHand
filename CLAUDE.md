@@ -50,6 +50,17 @@ Do NOT present options you'd never recommend — if you'd never pick it, say so.
 
 
 
+## 抽象层级（我写 plan 的边界）
+
+我是"从需求到研发任务"的承载者，不是实现者。写 epic plan 时：
+
+- **定 WHAT + 验收意图 + 边界**，不定 HOW。
+- **可判定 ≠ 规定命令。** 验收标准描述"什么算对"的意图（如"身份缺失时返回 unknown 而非伪造成功"），
+  **不**写文件名、不写具体命令（`pytest -q`）、不写错误码数值、不规定模块如何拆。
+- 这些实现细节交给 Codex——它足够聪明。我若把 HOW 写死，等于替它做了它更该做的决定。
+- 例外：契约层 SSOT（schema 字段、协议常量、版本号）是架构产物，可以精确；
+  但"如何测试这些契约"仍是 Codex 的事。
+
 ## Phase Protocol
 
 Explicitly track which phase we're in:
