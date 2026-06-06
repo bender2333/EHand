@@ -35,3 +35,9 @@
 - result: PASS，最小 RTL/testbench 结构检查通过
 - cmd: `python fpga\tools\run_sim.py`
 - result: FAIL/SKIP，缺 `iverilog` + `vvp`；choco 安装因非管理员/锁文件失败，winget 卡交互协议确认
+
+## 02:48 - FPGA smoke 仿真
+- workaround: 下载 Chocolatey `iverilog` nupkg 到 `%TEMP%\iverilog-portable` 并解包 x64 bin，不改系统目录
+- tool: Icarus Verilog 11.0 / vvp 11.0
+- cmd: `$env:PATH=\"$env:TEMP\iverilog-portable\x64\bin;$env:PATH\"; python fpga\tools\run_sim.py`
+- result: PASS，输出 `AP_TOP_SMOKE_PASS`
