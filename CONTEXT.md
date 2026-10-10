@@ -48,6 +48,10 @@ _Avoid_: diagnosis, verdict
 **Summary**:
 The top layer of the Timeline: counts plus the list of Fact Flags, what the Agent gets by default before drilling down.
 
+**Mark**:
+A named point the Agent puts on the Timeline to slice it, typically one per build-flash-observe iteration.
+_Avoid_: run, session (EHand has no run/stop; it plays and records continuously after apply)
+
 ## Relationships
 
 - A **Virtual Periphery** binds one **Peripheral Model** to each used **Channel**; **Channels** exist because of the **Wiring**.
