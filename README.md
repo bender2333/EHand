@@ -1,34 +1,11 @@
-# AgentProbe
+# EHand
 
-_Primary Mission: Make physical verification agent-executable._
+**Real hardware feedback for embedded-coding Agents.**
 
-AgentProbe is an AI-native embedded verification infrastructure project. Its Phase 1 North Star is a two-board self-hosting loop: a stable Golden AgentProbe helps an Agent build, flash, observe, diagnose, and fix a DUT AgentProbe with auditable evidence.
+Wire an MCU board (minimal system or dev board) to EHand once. From then on the Agent declares what sits outside the board (which pins, which protocol, which device on the other end) and EHand plays those devices with real electrical signals, injects faults on request, and returns a time-aligned record of both sides so the Agent can judge whether its firmware really works.
 
-## Current Contract Baseline
+V1 peripherals: serial peer, Modbus RTU slave(s) on RS485, NTC temperature (analogue voltage), switch and pulse sources. Hardware: Alientek (正点原子) Zynq-7020 dev board. Flashing stays on an external J-Link.
 
-- Product hardware path: Zynq-7020 SoM + minimal baseboard.
-- Target hardware path: DUT AgentProbe and STM32 M3/M4/M33 external targets.
-- Agent interface: Python CLI (`ap`) + local daemon + Skill files.
-- V1 loop: SPI-first Mock/Analyzer, UART bridge/snoop, 8-channel capture, CMSIS-DAP v2.
-- Evidence contract: stable terminal states, Evidence Envelope, versioned schemas, and topology identity.
-
-## Repository Layout
-
-| Path | Purpose |
-|------|---------|
-| `cli\` | Python CLI, daemon, protocol models, output formatters, tests |
-| `firmware\` | Zynq PS firmware, USB task, SWD task, event aggregation |
-| `fpga\` | Zynq PL RTL, Vivado scripts, simulation, constraints |
-| `hardware\` | SoM baseboard, fixtures, cables, mechanical assets |
-| `scenarios\` | Versioned scenarios, replay fixtures, schemas |
-| `skills\` | AgentProbe Skill files and capability boundary |
-| `docs\` | Quickstarts, protocol docs, hardware docs, examples |
-| `scripts\` | Cross-domain bootstrap, verification, packaging scripts |
-
-## First Implementation Priority
-
-1. Close contract/generator enforcement.
-2. Build replay-first loop.
-3. Enforce device identity/topology.
-4. Prove single-board loop.
-5. Prove two-board self-hosting loop.
+- Domain language: [`CONTEXT.md`](CONTEXT.md)
+- Decisions: [`docs/adr/`](docs/adr/)
+- Previous iteration (AgentProbe v0): [`archive/`](archive/)

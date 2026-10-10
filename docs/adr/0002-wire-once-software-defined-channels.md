@@ -1,0 +1,3 @@
+# Wire once; the Agent assigns every Channel's role in software
+
+An Agent cannot move jumper wires, so the Target Board is wired to the EHand Board once and every later change (which pin is a UART, which a 485 bus, which an NTC output) is a software decision made by the Agent. This is the reason EHand is built on an FPGA rather than an MCU or a PC with USB adapters: reassignable I/O, many Channels running in parallel, deterministic reply timing for repeatable timing Injections, observing a line while driving it, and hardware timestamps. Speed is not the reason; every V1 interface is low-speed.
