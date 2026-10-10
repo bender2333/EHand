@@ -45,6 +45,21 @@
 
 → **对 EHand 有影响的差别只有一条：扩展口数量（2 个 vs 1 个 + FMC）。** Wiring（#7）要先确认手上是哪块。下文两款分开写。
 
+
+### 1.1 用户截图清单与这两款都对不上（重要）
+
+用户给的清单（1 GB DDR3、**128 Mbit QSPI**、TF 卡、**UART 与板载 Xilinx JTAG 下载器共用一个 Type-C**、**80 个 GPIO**、独立供电可调 BANK、HDMI 输出、TFT LCD、摄像头、PL 50 MHz）和上面两款的官方参数有出入：
+
+| 清单 | 领航者 V2 / Z20 官方参数 |
+|---|---|
+| QSPI 128 Mbit | 256 Mb [Z20-PAGE 图17] |
+| 无 eMMC | 板载 8 GB eMMC [Z20-PAGE 图17] |
+| UART+JTAG 共用 Type-C（板载下载器）| USB-UART 是独立 Type-C（CH340），JTAG 是单独 10/14 针排针 [Z20-PAGE 图03、图13] |
+| 80 GPIO | 领航者扩展口 36 脚（×2 口）；Z20 扩展口 36 脚 + FMC [Z20-PAGE 图14] |
+| BANK 电压可调（总体）| Z20 仅 BANK33/34 可调；领航者未见 [Z20-PAGE 图15] |
+
+→ 清单很可能是**另一家的板子**（本次检索里同时出现过 Smart ZYNQ SL 的"一侧 Bank 电压可调、Type-C(JTAG) 供电"描述，`http://www.hellofpga.com/index.php/2023/05/10/smart-zynq-sl/`，但那是 7020 以外的小板，也不符合 80 GPIO）。**不要把本文的 Alientek 结论当成用户手上那块板的事实**，先让用户确认品牌型号（#2 未解决项第 1 条）。**UNVERIFIED**：清单对应哪家产品。
+
 ## 2. 芯片资源（两款相同）
 
 XC7Z020，Zynq-7000，PL 为 Artix-7 架构，速度等级 -2；双核 Cortex-A9 **最高 766 MHz**；85K LC，53,200 LUT，106,400 FF，4.9 Mb BRAM，220 DSP，4 CMT。[Z20-PAGE 图17、图19]
