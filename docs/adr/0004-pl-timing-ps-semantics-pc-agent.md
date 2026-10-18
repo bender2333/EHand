@@ -1,7 +1,7 @@
-# Split: PL for timing, PS for protocol semantics, PC for the Agent
+# Split: FPGA for timing, Host for protocol semantics, PC/Host for the Agent
 
-On the Zynq-7020, the PL owns everything that touches pins and must be clock-accurate: UART/485 transceive, DE direction timing, PWM and pulse output, switch inputs/outputs, sampling, hardware timestamps, timing Injections. The PS (ARM, Linux) owns protocol meaning: Modbus slave register tables and replies, NTC temperature-to-voltage, applying the Virtual Periphery and Injections, assembling and layering the Timeline, and serving the PC over Ethernet. The PC side is the `ehand` command-line tool the Agent calls (JSON out); MCP can wrap it later.
+On the Kunpeng AI Pro + OrangePi MSOC (GW5AT-138) platform, the FPGA owns everything that touches pins and must be clock-accurate: UART/485 transceive, DE direction timing, PWM and pulse output, switch inputs/outputs, sampling, hardware timestamps, timing Injections. Interconnect between Host and FPGA is PCIe Gen2 x4 (BAR0 MMIO / SGDMA). The Host (Kunpeng ARM64 running Linux) owns protocol meaning: Modbus slave register tables and replies, NTC temperature-to-voltage, applying the Virtual Periphery and Injections, assembling and layering the Timeline, and serving the PC / local Agent over Ethernet or local CLI (`ehand` command-line tool, JSON out; MCP can wrap it later).
 
 ## Consequences
 
-- Linux on the PS trades hard real-time for development speed; anything needing µs determinism must live in the PL. If a later physical-process model needs a hard real-time loop, run it bare-metal on CPU1 (AMP) rather than moving it to Linux.
+- Linux on the Host trades hard real-time for development speed; anything needing µs determinism must live in the FPGA. Communication between Host and FPGA goes over PCIe Gen2 x4 with low latency.

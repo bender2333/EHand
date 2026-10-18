@@ -1,6 +1,6 @@
 # EHand plays the Target Board's off-board world; AgentProbe v0 is archived
 
-The v0 docs aimed at a two-board self-hosting rig (Golden AgentProbe verifying DUT AgentProbe), SPI-first Mock, and a custom Zynq SoM baseboard with on-board CMSIS-DAP. None of it ran on hardware. We re-scoped (2026-10-10) to the user's own pain: an Agent can write protocol code but cannot check that it really talks. EHand now plays whatever sits outside an ordinary MCU board (serial peers, Modbus slaves on 485, NTC, switches and pulses) on an off-the-shelf Zynq-7020 dev board, and stays independent of the MCU family.
+The v0 docs aimed at a two-board self-hosting rig (Golden AgentProbe verifying DUT AgentProbe), SPI-first Mock, and a custom Zynq SoM baseboard with on-board CMSIS-DAP. None of it ran on hardware. We re-scoped (2026-10-10) to the user's own pain: an Agent can write protocol code but cannot check that it really talks. EHand now plays whatever sits outside an ordinary MCU board (serial peers, Modbus slaves on 485, NTC, switches and pulses) on Kunpeng AI Pro + OrangePi MSOC (Gowin GW5AT-138 FPGA), and stays independent of the MCU family.
 
 ## Considered Options
 

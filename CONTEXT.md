@@ -11,7 +11,7 @@ The user's MCU board under development (minimal system or dev board). EHand neve
 _Avoid_: DUT, external target, MCU (when the board is meant)
 
 **EHand Board**:
-The Zynq-7020 board that runs EHand.
+The Kunpeng AI Pro + OrangePi MSOC board combination that runs EHand (Kunpeng ARM64 host + Gowin GW5AT-138 FPGA via PCIe).
 _Avoid_: AgentProbe, Golden, probe
 
 **Wiring**:
