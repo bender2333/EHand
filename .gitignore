@@ -12,9 +12,12 @@ build/
 # Firmware / FPGA build outputs
 firmware/build/
 fpga/build/
+fpga/impl/
+fpga/sim/sim_*
 *.elf
 *.bin
 *.bit
+*.fs
 *.jou
 *.log
 *.rpt
