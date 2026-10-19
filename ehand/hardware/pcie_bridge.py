@@ -73,7 +73,7 @@ class PcieBridge:
     def is_connected(self) -> bool:
         try:
             sig = self.get_signature()
-            return sig == EXPECTED_SIGNATURE
+            return (sig & 0xFFFF0000) == EXPECTED_SIGNATURE
         except Exception:
             return False
 
